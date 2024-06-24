@@ -5,7 +5,7 @@ const getToken = () => {
 };
 
 const instance = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'https://intelligent-tranquility-production.up.railway.app',
 });
 
 instance.interceptors.request.use(
