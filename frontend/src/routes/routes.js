@@ -5,7 +5,7 @@ export const routes = {
   Register: "/register",
   Login: "/login",
   administracion: "/administracion",
-  Reservas: "/bookings",
+  Reservas: "/Reservas",
   productos: '/administracion/productos',
   permisos: '/administracion/permisos',
   categorias: '/administracion/categorias',

@@ -1,12 +1,13 @@
 package com.easyscore.controller;
 
-
 import com.easyscore.model.Booking;
 import com.easyscore.service.BookingService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -27,12 +28,14 @@ public class BookingController {
 
     @Operation(summary = "Crea una nueva reserva")
     @PostMapping
-    public ResponseEntity<String> createBooking(@RequestBody Booking booking) {
+    public ResponseEntity<String> createBooking(@RequestBody Booking booking, Authentication authentication) {
+        String email = authentication.getName(); // Obtener el email del usuario autenticado
+
         LocalTime startTime = booking.getHoraInicio();
         LocalTime endTime = booking.getHoraFin();
 
         if (bookingService.isProductAvailable(booking.getProducto().getId(), booking.getFechaReserva(), startTime, endTime)) {
-            bookingService.save(booking);
+            bookingService.save(booking, email); // Pasar el email al servicio de reservas
             return ResponseEntity.ok("Booking created successfully");
         } else {
             return ResponseEntity.status(409).body("Product is not available for the selected time slot");
@@ -56,5 +59,19 @@ public class BookingController {
         LocalDate localDate = LocalDate.parse(date);
         return bookingService.findBookingsByProductoAndFecha(productId, localDate);
     }
-}
 
+    @Operation(summary = "Obtiene las reservas del usuario autenticado")
+    @GetMapping("/mine")
+    public List<Booking> getUserBookings(Authentication authentication) {
+        String email = authentication.getName(); // Obtener el email del usuario autenticado
+        return bookingService.findBookingsByUserEmail(email);
+    }
+    @Operation(summary = "Obtiene los horarios disponibles para un producto en una fecha específica")
+    @GetMapping("/available-times/{productId}/{date}")
+    public List<LocalTime> getAvailableTimes(@PathVariable Long productId, @PathVariable String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        return bookingService.getAvailableTimes(productId, localDate);
+    }
+
+
+}
