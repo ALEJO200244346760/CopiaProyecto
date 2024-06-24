@@ -5,7 +5,7 @@ const getToken = () => {
 };
 
 const instance = axios.create({
-  baseURL: 'https://intelligent-tranquility-production.up.railway.app',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3000', // URL de fallback en caso de que la variable de entorno no esté definida
 });
 
 instance.interceptors.request.use(
