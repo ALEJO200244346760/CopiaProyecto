@@ -16,7 +16,7 @@ public class EmailService {
         message.setTo(to);
         message.setSubject("Bienvenido a Easyscore");
         message.setText("Hola " + nombre + ",\n\nBienvenido a Easyscore! Nos alegra tenerte con nosotros.\n\n" +
-                "Visita nuestro sitio: [URL_DEL_SITIO]\n\nSaludos,\nEl equipo de Easyscore");
+                "Visita nuestro sitio: [https://easyscore-beta.vercel.app]\n\nSaludos,\nEl equipo de Easyscore");
         mailSender.send(message);
     }
 }
