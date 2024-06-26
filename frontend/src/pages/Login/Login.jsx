@@ -107,9 +107,11 @@ const Login = () => {
       </form>
       <hr className="w-full my-4" />
       <div className="flex flex-col items-center">
-        <button className="flex items-center bg-white border border-black text-black font-bold py-2 px-6 rounded mb-2 w-full max-w-xl">
-          <FontAwesomeIcon icon={faGoogle} className="mr-2" /> Ingresar con Google
-        </button>
+        <a href="/oauth2/authorization/google" className="w-full">
+          <button className="flex items-center justify-center bg-white border border-black text-black font-bold py-2 px-6 rounded mb-2 w-full max-w-xl">
+            <FontAwesomeIcon icon={faGoogle} className="mr-2" /> Ingresar con Google
+          </button>
+        </a>
         <button className="flex items-center bg-white border border-black text-black font-bold py-2 px-6 rounded mb-2 w-full max-w-xl">
           <FontAwesomeIcon icon={faFacebook} className="mr-2" /> Ingresar con Facebook
         </button>
