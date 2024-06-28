@@ -5,7 +5,6 @@ import { useAuth } from '../../context/AuthContext';
 const MisReservas = () => {
     const { token } = useAuth();
     const [reservations, setReservations] = useState([]);
-    const [pastReservations, setPastReservations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -17,11 +16,7 @@ const MisReservas = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                const currentReservations = response.data.filter(reservation => new Date(reservation.fechaReserva) >= new Date());
-                const pastReservations = response.data.filter(reservation => new Date(reservation.fechaReserva) < new Date());
-
-                setReservations(currentReservations);
-                setPastReservations(pastReservations);
+                setReservations(response.data);
                 setLoading(false);
             } catch (err) {
                 setError('Error al cargar las reservas.');
@@ -41,13 +36,6 @@ const MisReservas = () => {
             setReservations(reservations.filter(reservation => reservation.id !== reservationId));
         } catch (err) {
             setError('Error al cancelar la reserva.');
-        }
-    };
-
-    const handleCancelClick = (reservationId) => {
-        const confirmed = window.confirm('¿Estás seguro de que quieres cancelar esta reserva?');
-        if (confirmed) {
-            cancelReservation(reservationId);
         }
     };
 
@@ -86,35 +74,11 @@ const MisReservas = () => {
                                 </div>
                             </div>
                             <button
-                                onClick={() => handleCancelClick(reservation.id)}
+                                onClick={() => cancelReservation(reservation.id)}
                                 className="bg-red-500 text-white px-4 py-2 rounded"
                             >
                                 Cancelar
                             </button>
-                        </li>
-                    ))}
-                </ul>
-            )}
-
-            <h2 className="text-2xl font-bold mt-8 mb-4">Historial de Reservas</h2>
-            {pastReservations.length === 0 ? (
-                <p className="text-gray-700">No tienes reservas anteriores.</p>
-            ) : (
-                <ul>
-                    {pastReservations.map((reservation) => (
-                        <li key={reservation.id} className="border-b py-4 flex justify-between items-center">
-                            <div className="flex items-center">
-                                <img
-                                    src={reservation.producto.imagenes[0]?.url || "https://recreasport.com/wp-content/uploads/2017/04/SAM_0191-2.jpg"}
-                                    alt={reservation.producto.nombre}
-                                    className="w-20 h-20 object-cover rounded-full mr-4"
-                                />
-                                <div>
-                                    <h2 className="text-xl font-semibold">{reservation.producto.nombre}</h2>
-                                    <p className="text-gray-700">{reservation.fechaReserva}</p>
-                                    <p className="text-gray-700">De {formatTime(reservation.horaInicio)} a {formatTime(reservation.horaFin)}</p>
-                                </div>
-                            </div>
                         </li>
                     ))}
                 </ul>

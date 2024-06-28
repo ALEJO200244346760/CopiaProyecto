@@ -1,3 +1,5 @@
+
+
 const TituloDegradado = () => {
     return (
         <div className="bg-gradient-to-r from-blue-500 to-green-400 text-transparent bg-clip-text font-michroma text-4xl text-center">

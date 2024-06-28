@@ -11,13 +11,13 @@ import ProductList from "./pages/ProductList/ProductList";
 import ProductManagement from "./Components/ProductManagement/ProductManagement";
 import PermissionsManagement from "./Components/PermissionsManagement/PermissionsManagement";
 import Detail from "./Components/Detail/Detail";
-import AboutUs from './pages/About/AboutUs'; // Asegúrate de importar el componente AboutUs
 import CategoryManagement from "./Components/CategoryManagement/CategoryManagement";
 import FeaturesManagement from "./Components/FeaturesManagement/FeaturesManagement";
 import MisReservas from "./Components/ReservarCancha/MisReservas";
 import { AuthProvider } from './context/AuthContext';
 import SearchResults from "./pages/Resultados/SearchResults";
 import Favorites from "./pages/Favorites/Favorites";
+import About from "./pages/About/About";
 
 function App() {
   const [favorites, setFavorites] = useState([]);
@@ -39,7 +39,6 @@ function App() {
           <Route element={<Layout />}>
             <Route path={routes.home} element={<Home />} />
             <Route path={routes.Reservas} element={<Reservas />} />
-            <Route path={routes.about} component={AboutUs} />
             <Route path={routes.productList} element={
               <ProductList
                 addToFavorites={addToFavorites}
@@ -62,6 +61,7 @@ function App() {
                 removeFromFavorites={removeFromFavorites}
               />
             } />
+            <Route path={routes.about} element= {<About/>}/>
           </Route>
           <Route path={routes.Login} element={<Login />} />
           <Route path="*" element={<h1>404 not found</h1>} />

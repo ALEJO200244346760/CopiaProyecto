@@ -9,8 +9,6 @@ import axios from '../../axiosConfig';
 import Caracteristicas from '../Caracteristicas/Caracteristicas';
 import { useAuth } from '../../context/AuthContext';
 import { routes } from '../../routes/routes';
-import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
-
 
 Modal.setAppElement('#root');
 
@@ -24,8 +22,6 @@ const Detail = ({ addToFavorites, removeFromFavorites, favorites }) => {
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
     const [reservations, setReservations] = useState(JSON.parse(localStorage.getItem('reservations')) || []);
-    const [availableTimes, setAvailableTimes] = useState([]);
-    const [reservationSuccess, setReservationSuccess] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [showImageModal, setShowImageModal] = useState(false);
 
@@ -41,21 +37,6 @@ const Detail = ({ addToFavorites, removeFromFavorites, favorites }) => {
 
         fetchProduct();
     }, [id]);
-
-    useEffect(() => {
-        const fetchAvailableTimes = async () => {
-            if (selectedDate) {
-                try {
-                    const response = await axios.get(`/bookings/available-times/${id}/${selectedDate.toISOString().split('T')[0]}`);
-                    setAvailableTimes(response.data.map(time => new Date(`${selectedDate.toISOString().split('T')[0]}T${time}`)));
-                } catch (err) {
-                    console.error('Error fetching available times:', err);
-                }
-            }
-        };
-
-        fetchAvailableTimes();
-    }, [selectedDate, id]);
 
     const openModal = () => {
         if (token) {
@@ -75,27 +56,51 @@ const Detail = ({ addToFavorites, removeFromFavorites, favorites }) => {
 
     const handleReserve = async () => {
         if (!selectedDate || !startTime || !endTime) return;
-
+    
         const newReservation = {
             producto: { id: productSelected.id },
             fechaReserva: selectedDate.toISOString().split('T')[0],
-            horaInicio: startTime.toTimeString().split(' ')[0],
-            horaFin: endTime.toTimeString().split(' ')[0],
+            horaInicio: startTime.toISOString().split('T')[1].split('Z')[0],
+            horaFin: endTime.toISOString().split('T')[1].split('Z')[0],
         };
-
+    
         try {
             const response = await axios.post('/bookings', newReservation, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            setReservations([...reservations, response.data]);
-            localStorage.setItem('reservations', JSON.stringify([...reservations, response.data]));
-            setReservationSuccess(true);
+            console.log('Reserva realizada:', response.data);
             closeModal();
         } catch (err) {
             console.error('Error al realizar la reserva:', err);
         }
+    };
+    
+    
+    
+
+    const isReserved = (date, start, end) => {
+        return reservations.some(reservation => {
+            return (
+                reservation.productId === productSelected.id &&
+                reservation.date === date.toISOString().split('T')[0] &&
+                (
+                    (start >= reservation.startTime && start < reservation.endTime) ||
+                    (end > reservation.startTime && end <= reservation.endTime) ||
+                    (start <= reservation.startTime && end >= reservation.endTime)
+                )
+            );
+        });
+    };
+
+    const filterTime = (time) => {
+        if (!selectedDate || !startTime) return false;
+
+        const date = selectedDate.toISOString().split('T')[0];
+        const start = startTime.getTime();
+        const end = time.getTime();
+        return isReserved(new Date(date), start, end);
     };
 
     const isFavorite = productSelected && favorites.some(fav => fav.id === productSelected.id);
@@ -118,7 +123,6 @@ const Detail = ({ addToFavorites, removeFromFavorites, favorites }) => {
 
     return (
         <div className="container mx-auto my-20 p-5 bg-white rounded-lg shadow-lg">
-            {reservationSuccess && <div className="text-green-500 alert alert-success">Reserva confirmada</div>}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div 
                     className="flex justify-center relative"
@@ -165,12 +169,6 @@ const Detail = ({ addToFavorites, removeFromFavorites, favorites }) => {
                             </button>
                         )}
                     </div>
-                    <div className="mt-2">
-                            <a href="https://w.app/XzC4hM" target="_blank" rel="noopener noreferrer" className="flex items-center bg-green-500 text-white px-4 py-2 text-base rounded shadow hover:bg-green-600 transition-all duration-300 max-w-max">
-                                <FontAwesomeIcon icon={faWhatsapp} className="w-4 h-4 mr-2" />
-                                WhatsApp
-                            </a>
-                    </div>
                 </div>
             </div>
             <Caracteristicas caracteristicas={productSelected.caracteristicas} />
@@ -200,11 +198,11 @@ const Detail = ({ addToFavorites, removeFromFavorites, favorites }) => {
                         onChange={time => setStartTime(time)}
                         showTimeSelect
                         showTimeSelectOnly
-                        timeIntervals={60}
+                        timeIntervals={30}
                         timeCaption="Hora de Inicio"
                         dateFormat="h:mm aa"
                         className="w-full px-3 py-2 border rounded"
-                        includeTimes={availableTimes}
+                        excludeTimes={reservations.filter(r => r.date === selectedDate?.toISOString().split('T')[0]).map(r => new Date(r.startTime))}
                     />
                 </div>
                 <div className="mb-4">
@@ -214,18 +212,18 @@ const Detail = ({ addToFavorites, removeFromFavorites, favorites }) => {
                         onChange={time => setEndTime(time)}
                         showTimeSelect
                         showTimeSelectOnly
-                        timeIntervals={60}
+                        timeIntervals={30}
                         timeCaption="Hora de Fin"
                         dateFormat="h:mm aa"
                         className="w-full px-3 py-2 border rounded"
-                        includeTimes={availableTimes.map(time => new Date(time.getTime() + 60 * 60 * 1000))}
+                        excludeTimes={reservations.filter(r => r.date === selectedDate?.toISOString().split('T')[0]).map(r => new Date(r.endTime))}
                     />
                 </div>
                 <div className="flex justify-end">
                     <button
                         onClick={handleReserve}
                         className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-                        disabled={!selectedDate || !startTime || !endTime}
+                        disabled={!selectedDate || !startTime || !endTime || filterTime(endTime)}
                     >
                         Confirmar Reserva
                     </button>
