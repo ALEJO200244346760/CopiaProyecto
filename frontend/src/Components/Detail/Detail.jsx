@@ -168,13 +168,12 @@ const Detail = ({ addToFavorites, removeFromFavorites, favorites }) => {
                                 <FontAwesomeIcon icon={faHeart} /> Agregar a Favoritos
                             </button>
                         )}
-                        <div className="mt-2">
+                    </div>
+                    <div className="mt-2">
                             <a href="https://w.app/XzC4hM" target="_blank" rel="noopener noreferrer" className="flex items-center bg-green-500 text-white px-4 py-2 text-base rounded shadow hover:bg-green-600 transition-all duration-300 max-w-max">
                                 <FontAwesomeIcon icon={faWhatsapp} className="w-4 h-4 mr-2" />
                                 WhatsApp
                             </a>
-                        </div>
-
                     </div>
                 </div>
             </div>
