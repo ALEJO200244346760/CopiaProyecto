@@ -163,7 +163,7 @@ const SearchBar = () => {
           placeholderText="Horario"
           showTimeSelect
           showTimeSelectOnly
-          timeIntervals={30}
+          timeIntervals={60}
           timeCaption="Horario"
           dateFormat="h:mm aa"
           ref={timePickerRef}
