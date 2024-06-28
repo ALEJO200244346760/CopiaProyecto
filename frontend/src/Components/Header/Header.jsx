@@ -3,6 +3,8 @@ import { routes } from "../../routes/routes";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Bars3Icon, XMarkIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
+import { IconName } from '@heroicons/react/24/outline';
+
 
 const Header = () => {
   const { token, roles, logout, user } = useAuth();
@@ -122,8 +124,14 @@ const Header = () => {
                 <div className="user-initials-circle bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center">
                   {getInitials(user?.nombre, user?.apellido)}
                 </div>
-                <button onClick={() => { logout(); setMenuOpen(false); }} className="bg-white text-green-500 py-2 px-4 rounded-2xl border border-green-500 hover:bg-green-500 hover:text-white" onClick={() => setMenuOpen(false)}>
-                  Cerrar Sesion
+                <button
+                  onClick={() => {
+                    logout();
+                    setMenuOpen(false);
+                  }}
+                  className="bg-white text-green-500 py-2 px-4 rounded-2xl border border-green-500 hover:bg-green-500 hover:text-white"
+                >
+                  Cerrar Sesión
                 </button>
               </div>
             </>
