@@ -143,8 +143,8 @@ const Detail = ({ addToFavorites, removeFromFavorites, favorites }) => {
                 <div>
                     <h1 className="text-3xl font-bold mb-4">{productSelected.nombre}</h1>
                     <p className="text-gray-700 text-lg mb-4">{productSelected.descripcion}</p>
-                    <p className="text-gray-700 text-lg mb-4"><strong>Ciudad:</strong> {productSelected.ciudad}</p>
-                    <p className="text-gray-700 text-lg mb-4"><strong>Dirección:</strong> {productSelected.direccion}</p>
+                    <p className="text-gray-700 text-lg mb-4"><strong>Ciudad:</strong> {productSelected.ubicacion.ciudad}</p>
+                    <p className="text-gray-700 text-lg mb-4"><strong>Dirección:</strong> {productSelected.ubicacion.direccion}</p>
                     <div className="text-2xl font-semibold text-green-600 mb-4">${productSelected.precio}</div>
                     <button onClick={openModal} className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition-all duration-300">
                        Reservar Cancha
